@@ -3,8 +3,8 @@ package com.qrcodegenerator.qrcodegenerator.controller;
 import java.io.IOException;
 import java.util.Base64;
 
+import org.aspectj.weaver.ast.Instanceof;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -48,7 +48,10 @@ public class QRController {
         }
         String qrCodeEncoded = Base64.getEncoder().encodeToString(image);
         qrCode.setEncodedText(qrCodeEncoded);
-        QRCode qr = qrCodeService.createQRCode(qrCode);
+        qrCode = new QRCode(text, qrCodeEncoded, null); // Record the QR Code in the database
+        if (qrCode instanceof QRCode) { // Check if the object is an instance of QRCode
+            QRCode qr = qrCodeService.createQRCode(qrCode); // Save the QR Code in the database
+        }
         model.addAttribute("title", "QR Code Generator");
         model.addAttribute("text", text);
         model.addAttribute("qrCodeEncoded", qrCode.getEncodedText());

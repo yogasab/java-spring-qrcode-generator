@@ -20,7 +20,7 @@ public class QRCode {
     private String encodedText;
     private LocalDateTime createdAt;
 
-    public QRCode(String text, String encodedText, Long id, LocalDateTime downloadedAt) {
+    public QRCode(String text, String encodedText, Long id) {
         this.text = text;
         this.encodedText = encodedText;
         this.createdAt = LocalDateTime.now();

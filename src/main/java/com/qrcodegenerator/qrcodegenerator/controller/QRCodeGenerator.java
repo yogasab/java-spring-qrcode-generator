@@ -12,6 +12,10 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+enum QRCodeFormat {
+    PNG, JPG, GIF
+}
+
 @FunctionalInterface
 interface QRCodeImageGenerator {
     void generateQRCodeImage(String text, int width, int height, String filePath) throws WriterException, IOException;
@@ -32,6 +36,20 @@ class QRCodeGenerator extends BaseQRCodeGenerator {
         BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
 
         Path path = FileSystems.getDefault().getPath(filePath);
+        switch (QRCodeFormat.valueOf(filePath.substring(filePath.lastIndexOf(".") + 1).toUpperCase())) {
+            case PNG:
+                MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
+                break;
+            case JPG:
+                MatrixToImageWriter.writeToPath(bitMatrix, "JPG", path);
+                break;
+            case GIF:
+                MatrixToImageWriter.writeToPath(bitMatrix, "GIF", path);
+                break;
+            default:
+                MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
+                break;
+        }
         MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
     }
 
