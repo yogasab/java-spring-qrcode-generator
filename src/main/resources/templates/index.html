@@ -17,7 +17,7 @@
             <form th:action="@{/generate}" th:object="${qrCode}" method="POST">
                <div class="form-group">
                   <label> Text </label>
-                  <input type="text" name="text" th:field="*{text}" class="form-control" placeholder="Enter text" />
+                  <input type="text" name="text" class="form-control" placeholder="Enter text" />
                </div>
                <div class="box-footer">
                   <button type="submit" class="btn btn-primary mt-3">

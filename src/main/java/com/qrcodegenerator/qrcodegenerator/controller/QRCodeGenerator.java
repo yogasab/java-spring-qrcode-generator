@@ -20,37 +20,44 @@ enum QRCodeFormat {
 interface QRCodeImageGenerator {
     void generateQRCodeImage(String text, int width, int height, String filePath) throws WriterException, IOException;
 }
-
+// Inheritance
 class QRCodeGenerator extends BaseQRCodeGenerator {
-
     private final QRCodeImageGenerator imageGenerator;
 
     public QRCodeGenerator() {
-        this.imageGenerator = this::generateQRCodeImage;
+        // Lambda expression
+        this.imageGenerator = (text, width, height, filePath) -> {
+            try {
+                QRCodeWriter qrCodeWriter = new QRCodeWriter();
+                BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+                Path path = FileSystems.getDefault().getPath(filePath);
+
+                String fileExtension = filePath.substring(filePath.lastIndexOf(".") + 1).toUpperCase();
+
+                switch (QRCodeFormat.valueOf(fileExtension)) {
+                    case PNG:
+                        MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
+                        break;
+                    case JPG:
+                        MatrixToImageWriter.writeToPath(bitMatrix, "JPG", path);
+                        break;
+                    case GIF:
+                        MatrixToImageWriter.writeToPath(bitMatrix, "GIF", path);
+                        break;
+                    default:
+                        MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
+                        break;
+                }
+            } catch (WriterException | IOException e) {
+                e.printStackTrace();
+            }
+        };
     }
 
     @Override
     public void generateQRCodeImage(String text, int width, int height, String filePath)
             throws WriterException, IOException {
-        QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
-
-        Path path = FileSystems.getDefault().getPath(filePath);
-        switch (QRCodeFormat.valueOf(filePath.substring(filePath.lastIndexOf(".") + 1).toUpperCase())) {
-            case PNG:
-                MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
-                break;
-            case JPG:
-                MatrixToImageWriter.writeToPath(bitMatrix, "JPG", path);
-                break;
-            case GIF:
-                MatrixToImageWriter.writeToPath(bitMatrix, "GIF", path);
-                break;
-            default:
-                MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
-                break;
-        }
-        MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
+        imageGenerator.generateQRCodeImage(text, width, height, filePath);
     }
 
     @Override
@@ -62,7 +69,6 @@ class QRCodeGenerator extends BaseQRCodeGenerator {
         MatrixToImageConfig config = new MatrixToImageConfig(0xFF000002, 0xFFFFC041);
 
         MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream, config);
-        byte[] pngData = pngOutputStream.toByteArray();
-        return pngData;
+        return pngOutputStream.toByteArray();
     }
 }

@@ -49,11 +49,11 @@ public class QRCode {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
-
+    // Encapsulation
     public String getEncodedText() {
         return this.encodedText;
     }
-
+    // Encapsulation
     public void setEncodedText(String encodedText) {
         this.encodedText = encodedText;
     }

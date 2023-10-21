@@ -41,6 +41,7 @@ public class QRController {
     public String generateQRCode(@ModelAttribute("qrCode") QRCode qrCode, Model model) {
         byte[] image = new byte[0];
         String text = qrCode.getText();
+        // Try Catch handling
         try {
             image = QRCodeGenerator.class.newInstance().getQRCodeImageByte(text, 350, 350);
         } catch (Exception e) {
